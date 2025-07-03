@@ -1,4 +1,3 @@
-%{ if gridgain_config_defined ~}
 #cloud-config
 # vim: syntax=yaml
 
@@ -18,17 +17,24 @@ write_files:
     owner: gridgain:gridgain
     content: !!binary |
       ${gridgain_license}
+%{ else ~}
+  - path: /etc/gridgain9db/gridgain-license.conf
+    encoding: gzip
+    owner: gridgain:gridgain
+    content: ""
 %{ endif ~}
   - path: /etc/gridgain9db/gridgain-config.conf
     encoding: gzip
     owner: gridgain:gridgain
     content: !!binary |
       ${gridgain_config}
+%{ if gridgain_logging_defined ~}
   - path: /etc/gridgain9db/gridgain.java.util.logging.properties
     encoding: gzip
     owner: gridgain:gridgain
     content: !!binary |
       ${gridgain_logging}
+%{ endif ~}
 %{ if gridgain_ssl_enable ~}
   - path: /etc/gridgain9db/ssl/server.crt
     encoding: gzip
@@ -49,11 +55,12 @@ runcmd:
   - rm -f /etc/gridgain9db/ssl/server.crt /etc/gridgain9db/ssl/server.key
   - chmod 0640 /etc/gridgain9db/ssl/*
   - chown -R gridgain:gridgain /etc/gridgain9db/ssl
-%{ endif ~} 
+%{ endif ~}
+  - systemctl stop gridgain-autostart
+  - systemctl disable gridgain-autostart
   - ['bash', '-c', 'sed -i "s/^\( *NODE_NAME *= *\).*/\\1node${node_id}/" /etc/gridgain9db/vars.env']
   - systemctl stop gridgain9db
   - rm -rf /var/lib/gridgain9db/*
   - systemctl start gridgain9db
   - if [ ${node_id} -eq 0 ]; then while [ "$(gridgain9 cluster status --url=${cluster_url} | grep -oP '\[nodes:\ \K([0-9]+)')" != ${nodes_count} ]; do echo "Waiting to the cluster node up and running..."; done; fi
   - if [ ${node_id} -eq 0 ]; then gridgain9 cluster init --name=${cluster_name} --metastorage-group ${metastore_group} --url=${cluster_url} --license=/etc/gridgain9db/gridgain-license.conf; fi
-%{ endif ~}

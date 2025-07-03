@@ -16,7 +16,7 @@ resource "google_kms_crypto_key" "this" {
   count           = local.create_kms_keys ? 1: 0
   name            = "${var.name_prefix}-${random_id.kms[0].hex}-disk-key"
   key_ring        = local.kms_key_ring_id
-  rotation_period = "2592000s"
+  rotation_period = "120000s"
 }
 
 resource "random_id" "kms" {

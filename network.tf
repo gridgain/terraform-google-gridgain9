@@ -7,12 +7,14 @@ locals {
 
 resource "google_compute_network" "vpc" {
   count       = local.create_vpc ? 1 : 0
+  project     = var.project_id
   name        = "${var.name_prefix}-vpc"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "subnet" {
   count          = local.create_vpc ? 1 : 0
+  project        = var.project_id
   name           = "${var.name_prefix}-subnet"
   ip_cidr_range  = var.subnet_cidr
   region         = var.region

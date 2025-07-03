@@ -4,6 +4,7 @@ locals {
 
 resource "google_dns_managed_zone" "cluster_zone" {
   count    = var.gridgain_cluster_dns == "" ? 1 : 0
+  project  = var.project_id
   name     = "${var.name_prefix}-cluster-local"
   dns_name = "cluster.local."
 
@@ -17,10 +18,11 @@ resource "google_dns_managed_zone" "cluster_zone" {
 }
 
 resource "google_dns_record_set" "cluster_record" {
-  count = var.gridgain_cluster_dns == "" ? 1 : 0
-  name  = "gridgain.${google_dns_managed_zone.cluster_zone[0].dns_name}"
-  type  = "A"
-  ttl   = 300
+  count   = var.gridgain_cluster_dns == "" ? 1 : 0
+  project = var.project_id
+  name    = "gridgain.${google_dns_managed_zone.cluster_zone[0].dns_name}"
+  type    = "A"
+  ttl     = 300
 
   managed_zone = google_dns_managed_zone.cluster_zone[0].name
 
