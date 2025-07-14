@@ -4,22 +4,17 @@
 
 output "vpc_id" {
   description = "ID of the created/provided subnet"
-  value       = local.vpc_id
+  value       = try(google_compute_network.vpc[0].id, null)
 }
 
 output "subnet_id" {
   description = "ID of the created subet"
-  value       = local.subnet
+  value       = try(google_compute_subnetwork.subnet[0].id, null)
 }
 
 output "cluster_dns" {
   description = "Gridgain Cluster FQDN"
-  value       = try(local.cluster_dns, "")
-}
-
-output "cluster_url" {
-  description = "Gridgain Cluster FQDN"
-  value       = try(local.cluster_url, "")
+  value       = try(google_dns_record_set.cluster_record[0].name, null)
 }
 
 ################################################################################
@@ -27,12 +22,12 @@ output "cluster_url" {
 ################################################################################
 output "kms_keyring_id" {
   description = "KMS keyring id used for encryption"
-  value       = local.kms_key_ring_id
+  value       = try(google_kms_key_ring.this[0].id, null)
 }
 
 output "kms_key_id" {
   description = "KMS key id used for encryption"
-  value       = local.kms_crypto_key_id
+  value       = try(google_kms_crypto_key.this[0].id, null)
 }
 
 ################################################################################
@@ -41,7 +36,7 @@ output "kms_key_id" {
 output "instance_ids" {
   description = "List of compute instance IDs"
   value = try(
-    google_compute_instance.this.*.id,
+    google_compute_instance.this.*.instance_id,
     [],
   )
 }
@@ -57,24 +52,19 @@ output "instance_links" {
 output "instance_status" {
   description = "List of instance status"
   value = try(
-    google_compute_instance.this.*.instance_status,
+    google_compute_instance.this.*.current_status,
     [],
   )
 }
 
 output "public_ips" {
   description = "List of public IP addresses assigned to the instances"
-  value = try(local.public_ips, [])
+  value = try(google_compute_instance.this.*.network_interface.0.access_config.0.nat_ip, [])
 }
 
 output "private_ips" {
   description = "List of private IP addresses assigned to the instances"
-  value = try(local.private_ips, [])
-}
-
-output "image_id" {
-  description = "Image ID that was used to create the instances"
-  value = var.image_id
+  value = try(google_compute_instance.this.*.network_interface.0.network_ip, [])
 }
 
 ################################################################################
