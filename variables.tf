@@ -38,10 +38,22 @@ variable "image_id" {
   type        = string
 }
 
+variable "enable_project_oslogin" {
+  description = "Allow OS Login at project level"
+  type        = bool
+  default     = false
+}
+
 variable "enable_oslogin" {
-  description = "Enable os login"
+  description = "Enable OS Login to compute instance"
   type        = bool
   default     = true
+}
+
+variable "oslogin_access_principals" {
+  description = "List of principals that are granted access via IAP and SSH. Or leave blank to take the current user. Examples: user:alice@example.com, group:devops@example.com, serviceAccount:sa@project.iam.gserviceaccount.com"
+  type    = list(string)
+  default = []
 }
 
 variable "ssh_pub_key" {
@@ -161,7 +173,7 @@ variable "enable_disk_encryption" {
 variable "kms_location" {
   description = "KMS location"
   type        = string
-  default     = ""
+  default     = "us-east1"
 }
 
 variable "kms_key_ring_id" {

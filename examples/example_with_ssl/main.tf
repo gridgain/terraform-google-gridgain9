@@ -7,7 +7,7 @@ module "gridgain" {
   source = "../../"
 
   project_id     = "project-id"
-  image_id       = "vmi-gridgain-db-9-1-3-byol-v00-09-pr-114-0-0-1-4"
+  image_id       = "vmi-gridgain-db-9-1-4-byol-v00-09-0-0-1-7"
   nodes_count    = 2
   public_access_enable = true
   ssh_pub_key    = "ssh-rsa public-key"

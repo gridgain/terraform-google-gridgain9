@@ -1,4 +1,3 @@
-
 ## GG9 Terraform Module for GCP
 
 This module deploys the GG9 Java application to Google Cloud Platform.
@@ -31,16 +30,21 @@ No modules.
 | [google_compute_firewall.public_ingress](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall) | resource |
 | [google_compute_instance.this](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance) | resource |
 | [google_compute_network.vpc](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_network) | resource |
+| [google_compute_project_metadata.enable_oslogin](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_project_metadata) | resource |
 | [google_compute_subnetwork.subnet](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_subnetwork) | resource |
 | [google_dns_managed_zone.cluster_zone](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/dns_managed_zone) | resource |
 | [google_dns_record_set.cluster_record](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/dns_record_set) | resource |
 | [google_kms_crypto_key.this](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/kms_crypto_key) | resource |
-| [google_kms_crypto_key_iam_member.sa_crypto_key_admin](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/kms_crypto_key_iam_member) | resource |
+| [google_kms_crypto_key_iam_binding.sa_encrypter](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/kms_crypto_key_iam_binding) | resource |
 | [google_kms_key_ring.this](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/kms_key_ring) | resource |
-| [google_kms_key_ring_iam_member.sa_keyring_admin](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/kms_key_ring_iam_member) | resource |
+| [google_project_iam_member.iap_tunnel](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/project_iam_member) | resource |
+| [google_project_iam_member.os_admin_login](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/project_iam_member) | resource |
+| [google_project_iam_member.os_login](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/project_iam_member) | resource |
 | [google_project_iam_member.sa_logging](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/project_iam_member) | resource |
+| [google_project_iam_member.sa_metrics_writer](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/project_iam_member) | resource |
 | [google_service_account.sa](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/service_account) | resource |
 | [random_id.kms](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) | resource |
+| [google_client_openid_userinfo.this](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/client_openid_userinfo) | data source |
 | [template_file.gridgain_config](https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/file) | data source |
 
 ## Inputs
@@ -48,7 +52,8 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_enable_disk_encryption"></a> [enable\_disk\_encryption](#input\_enable\_disk\_encryption) | Enable disk encryption using KMS keys | `bool` | `false` | no |
-| <a name="input_enable_oslogin"></a> [enable\_oslogin](#input\_enable\_oslogin) | Enable os login | `bool` | `true` | no |
+| <a name="input_enable_oslogin"></a> [enable\_oslogin](#input\_enable\_oslogin) | Enable OS Login to compute instance | `bool` | `true` | no |
+| <a name="input_enable_project_oslogin"></a> [enable\_project\_oslogin](#input\_enable\_project\_oslogin) | Allow OS Login at project level | `bool` | `false` | no |
 | <a name="input_gridgain_cluster_dns"></a> [gridgain\_cluster\_dns](#input\_gridgain\_cluster\_dns) | GridGain Cluster DNS (FQDN) | `string` | `""` | no |
 | <a name="input_gridgain_config"></a> [gridgain\_config](#input\_gridgain\_config) | GridGain config | `string` | `""` | no |
 | <a name="input_gridgain_license"></a> [gridgain\_license](#input\_gridgain\_license) | GridGain license | `string` | `""` | no |
@@ -60,11 +65,12 @@ No modules.
 | <a name="input_keystore_password"></a> [keystore\_password](#input\_keystore\_password) | SSL Keystore password | `string` | `""` | no |
 | <a name="input_kms_crypto_key_id"></a> [kms\_crypto\_key\_id](#input\_kms\_crypto\_key\_id) | KMS crypto key in keyring | `string` | `""` | no |
 | <a name="input_kms_key_ring_id"></a> [kms\_key\_ring\_id](#input\_kms\_key\_ring\_id) | KMS keyring id | `string` | `""` | no |
-| <a name="input_kms_location"></a> [kms\_location](#input\_kms\_location) | KMS location | `string` | `""` | no |
+| <a name="input_kms_location"></a> [kms\_location](#input\_kms\_location) | KMS location | `string` | `"us-east1"` | no |
 | <a name="input_machine_type"></a> [machine\_type](#input\_machine\_type) | GCP machine type | `string` | `"e2-medium"` | no |
 | <a name="input_marketplace_labels"></a> [marketplace\_labels](#input\_marketplace\_labels) | Consumption‑tracking + common labels | `map(string)` | `{}` | no |
 | <a name="input_name_prefix"></a> [name\_prefix](#input\_name\_prefix) | Name prefix to be used for all resources | `string` | `"gridgain9db"` | no |
 | <a name="input_nodes_count"></a> [nodes\_count](#input\_nodes\_count) | Number of GG9 nodes. 1 = single node | `number` | `1` | no |
+| <a name="input_oslogin_access_principals"></a> [oslogin\_access\_principals](#input\_oslogin\_access\_principals) | List of principals that are granted access via IAP and SSH. Or leave blank to take the current user. Examples: user:alice@example.com, group:devops@example.com, serviceAccount:sa@project.iam.gserviceaccount.com | `list(string)` | `[]` | no |
 | <a name="input_project_id"></a> [project\_id](#input\_project\_id) | GCP project ID | `string` | n/a | yes |
 | <a name="input_public_access_enable"></a> [public\_access\_enable](#input\_public\_access\_enable) | Whether to assign external IPs to instances | `bool` | `false` | no |
 | <a name="input_public_allowlist"></a> [public\_allowlist](#input\_public\_allowlist) | CIDR allow list for public subnet | `list(string)` | <pre>[<br/>  "0.0.0.0/0"<br/>]</pre> | no |
