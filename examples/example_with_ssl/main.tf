@@ -1,3 +1,6 @@
+# IMPORTANT: Cluster won't be initialized until there is a DNS-record (gridgain_cluster_dns)
+# DNS record should point to public IP addresses of created Virtual Machines
+
 provider "google" {
   project        = "project-name"
   region         = "us-east1"
@@ -8,7 +11,6 @@ module "gridgain" {
 
   project_id     = "project-id"
   nodes_count    = 2
-  public_access_enable = true
   ssh_pub_key    = "ssh-rsa public-key"
   goog_cm_deployment_name = "test-deployment"
 
