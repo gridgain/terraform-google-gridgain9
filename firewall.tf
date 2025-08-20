@@ -5,7 +5,8 @@ locals {
 
 resource "google_compute_firewall" "iap_ssh" {
   count     = var.enable_oslogin ? 1 : 0
-  name      = "allow-iap-ssh"
+  project   = var.project_id
+  name      = "${var.name_prefix}-allow-iap-ssh"
   network   = local.vpc_id
   direction = "INGRESS"
   allow {
@@ -16,14 +17,36 @@ resource "google_compute_firewall" "iap_ssh" {
 }
 
 resource "google_compute_firewall" "icmp" {
+  name      = "${var.name_prefix}-allow-icmp"
+  network   = local.vpc_id
+  direction = "INGRESS"
+  allow {
+    protocol = "icmp"
+  }
+  source_ranges = [var.subnet_cidr]
+}
+
+resource "google_compute_firewall" "public_icmp" {
   count   = var.public_access_enable ? 1 : 0
-  name      = "allow-icmp"
+  name      = "${var.name_prefix}-allow-public-icmp"
   network   = local.vpc_id
   direction = "INGRESS"
   allow {
     protocol = "icmp"
   }
   source_ranges = var.public_allowlist
+}
+
+resource "google_compute_firewall" "ingress" {
+  name    = "${var.name_prefix}-ingress"
+  network = local.vpc_id
+
+  allow {
+    protocol = "tcp"
+    ports    = local.exposed_ports
+  }
+
+  source_ranges = [var.subnet_cidr]
 }
 
 resource "google_compute_firewall" "public_ingress" {

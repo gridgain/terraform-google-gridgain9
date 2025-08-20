@@ -1,5 +1,4 @@
 locals {
-  enable_project_oslogin = var.enable_project_oslogin ? true : false
   principals = length(var.oslogin_access_principals) > 0 ? var.oslogin_access_principals : [
     "user:${data.google_client_openid_userinfo.this.email}"
   ]
@@ -8,24 +7,27 @@ locals {
 data "google_client_openid_userinfo" "this" {}
 
 resource "google_service_account" "sa" {
+  project      = var.project_id
   account_id   = "${var.name_prefix}-sa"
   display_name = "${var.name_prefix} VM service account"
 }
 
 resource "google_project_iam_member" "sa_logging" {
+  count   = var.enable_logging ? 1: 0
   project = var.project_id
   role    = "roles/logging.logWriter"
   member  = "serviceAccount:${google_service_account.sa.email}"
 }
 
 resource "google_project_iam_member" "sa_metrics_writer" {
+  count   = var.enable_monitoring ? 1: 0
   project = var.project_id
   role    = "roles/monitoring.metricWriter"
   member  = "serviceAccount:${google_service_account.sa.email}"
 }
 
 resource "google_compute_project_metadata" "enable_oslogin" {
-  count         = local.enable_project_oslogin ? 1: 0
+  count         = var.enable_project_oslogin ? 1: 0
   metadata = {
     enable-oslogin = "TRUE"
   }
