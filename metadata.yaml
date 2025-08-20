@@ -52,7 +52,7 @@ spec:
       - name: source_image
         description: The image name for the disk for the VM instance.
         varType: string
-        defaultValue: projects/gridgain-public/global/images/vmi-gridgain-db-9-1-5-byol-v00-09-0-0-1-8
+        defaultValue: projects/gridgain-public/global/images/vmi-gridgain-db-9-1-5-byol-0-0-1-9
       - name: enable_project_oslogin
         description: Allow OS Login at project level
         varType: bool

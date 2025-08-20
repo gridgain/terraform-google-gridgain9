@@ -81,7 +81,7 @@ No modules.
 | <a name="input_root_disk_size_gb"></a> [root\_disk\_size\_gb](#input\_root\_disk\_size\_gb) | Boot disk size in GB | `number` | `128` | no |
 | <a name="input_root_disk_throughput"></a> [root\_disk\_throughput](#input\_root\_disk\_throughput) | Root disk throughput in MB/s | `number` | `null` | no |
 | <a name="input_root_disk_type"></a> [root\_disk\_type](#input\_root\_disk\_type) | Boot disk size type | `string` | `"pd-balanced"` | no |
-| <a name="input_source_image"></a> [source\_image](#input\_source\_image) | The image name for the disk for the VM instance. | `string` | `"projects/gridgain-public/global/images/projects/gridgain-public/global/images/vmi-gridgain-db-9-1-5-byol-v00-09-0-0-1-8"` | no |
+| <a name="input_source_image"></a> [source\_image](#input\_source\_image) | The image name for the disk for the VM instance. | `string` | `"projects/gridgain-public/global/images/projects/gridgain-public/global/images/vmi-gridgain-db-9-1-5-byol-0-0-1-9"` | no |
 | <a name="input_ssh_pub_key"></a> [ssh\_pub\_key](#input\_ssh\_pub\_key) | SSH public key used to connect to instances (algorithm + public key). If empty, none will be provisioned | `string` | `""` | no |
 | <a name="input_subnet_cidr"></a> [subnet\_cidr](#input\_subnet\_cidr) | CIDR for private subnet | `string` | `"10.0.0.0/24"` | no |
 | <a name="input_subnet_id"></a> [subnet\_id](#input\_subnet\_id) | Subnet ID to be used for deployment. If empty, module should provision new subnets | `string` | `""` | no |
