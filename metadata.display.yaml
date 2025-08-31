@@ -17,6 +17,7 @@ spec:
           name: enable_disk_encryption
           title: Enable Disk Encryption
           tooltip: Whether to enable CMEK disk encryption for the cluster.
+          section: security
         enable_logging:
           name: enable_logging
           title: Enable Logging
@@ -31,76 +32,107 @@ spec:
           name: enable_oslogin
           title: Enable Oslogin
           tooltip: Enable OS Login to manage SSH access via IAM roles.
+          section: security
         enable_project_oslogin:
           name: enable_project_oslogin
           title: Enable Project Oslogin
           tooltip: Enforce project-level OS Login instead of instance-level settings.
+          section: security
         goog_cm_deployment_name:
           name: goog_cm_deployment_name
           title: Goog Cm Deployment Name
           tooltip: Internal deployment name assigned by Google Cloud Marketplace.
+          invisible: true
         gridgain_cluster_dns:
           name: gridgain_cluster_dns
           title: Gridgain Cluster Dns
           tooltip: DNS name assigned to the GridGain cluster.
+          section: gridgain_configuration
         gridgain_config:
           name: gridgain_config
           title: Gridgain Config
           tooltip: Content of the GridGain configuration file.
+          section: gridgain_configuration
+          xGoogleProperty:
+            type: ET_MULTI_LINE_STRING
         gridgain_license:
           name: gridgain_license
           title: Gridgain License
           tooltip: Content of the GridGain license file.
+          section: gridgain_configuration
+          xGoogleProperty:
+            type: ET_MULTI_LINE_STRING
         gridgain_logging_config:
           name: gridgain_logging_config
           title: Gridgain Logging Config
           tooltip: Logging configuration for GridGain nodes.
+          section: gridgain_configuration
+          xGoogleProperty:
+            type: ET_MULTI_LINE_STRING
         gridgain_ssl_cert:
           name: gridgain_ssl_cert
           title: Gridgain SSL Cert
           tooltip: SSL certificate for securing GridGain client and node connections.
+          section: gridgain_configuration
+          xGoogleProperty:
+            type: ET_MULTI_LINE_STRING
         gridgain_ssl_enable:
           name: gridgain_ssl_enable
           title: Gridgain SSL Enable
           tooltip: Enable SSL/TLS encryption for GridGain communication.
+          section: gridgain_configuration
         gridgain_ssl_key:
           name: gridgain_ssl_key
           title: Gridgain SSL Key
           tooltip: Private key for the GridGain SSL certificate.
+          section: gridgain_configuration
+          xGoogleProperty:
+            type: ET_MULTI_LINE_STRING
         keystore_password:
           name: keystore_password
           title: Keystore Password
           tooltip: Password to unlock the keystore containing SSL certificates.
+          section: gridgain_configuration
         kms_crypto_key_id:
           name: kms_crypto_key_id
           title: Kms Crypto Key Id
           tooltip: ID of the KMS CryptoKey to use for disk encryption.
+          section: security
         kms_key_ring_id:
           name: kms_key_ring_id
           title: Kms Key Ring Id
           tooltip: ID of the KMS key ring that stores the encryption key.
+          section: security
         kms_location:
           name: kms_location
           title: Kms Location
           tooltip: Region of the KMS key ring for encryption keys.
+          section: security
         machine_type:
           name: machine_type
           title: Machine Type
           tooltip: Compute Engine machine type for GridGain nodes.
+          section: compute
           xGoogleProperty:
             type: ET_GCE_MACHINE_TYPE
+            zoneProperty: zones
         name_prefix:
           name: name_prefix
           title: Name Prefix
           tooltip: Prefix to use for naming all created resources.
+          section: compute
         nodes_count:
           name: nodes_count
           title: Nodes Count
           tooltip: Number of GridGain nodes to deploy in the cluster.
+          section: compute
         oslogin_access_principals:
           name: oslogin_access_principals
           title: Oslogin Access Principals
-          tooltip: IAM principals that should be granted OS Login access.
+          tooltip: IAM principals that should be granted OS Login access (e.g., user:user@example.com, group:admins@example.com, serviceAccount:my-sa@project.iam.gserviceaccount.com).
+          section: security
+          minItems: 0
+          maxItems: 8
         project_id:
           name: project_id
           title: Project Id
@@ -110,49 +142,61 @@ spec:
           name: public_access_enable
           title: Public Access Enable
           tooltip: Allow external public access to the cluster endpoints.
+          section: networking
         public_allowlist:
           name: public_allowlist
           title: Public Allowlist
           tooltip: CIDR ranges allowed to access the cluster if public access is enabled.
+          section: networking
         region:
           name: region
           title: Region
           tooltip: Google Cloud region where the resources will be deployed.
+          section: compute
+          xGoogleProperty:
+            type: ET_GCE_REGION
         root_disk_iops:
           name: root_disk_iops
           title: Root Disk Iops
           tooltip: Custom IOPS configuration for root disks (if supported by disk type).
+          section: compute
         root_disk_size_gb:
           name: root_disk_size_gb
           title: Root Disk Size Gb
           tooltip: Size of the root disk in GB.
+          section: compute
           xGoogleProperty:
             type: ET_GCE_DISK_SIZE
         root_disk_throughput:
           name: root_disk_throughput
           title: Root Disk Throughput
           tooltip: Custom throughput setting for root disks (if supported by disk type).
+          section: compute
         root_disk_type:
           name: root_disk_type
           title: Root Disk Type
           tooltip: Disk type for the VM root disk (e.g. pd-ssd, pd-balanced).
+          section: compute
           xGoogleProperty:
             type: ET_GCE_DISK_TYPE
-            zoneProperty: zone
+            zoneProperty: zones
         source_image:
           name: source_image
           title: Source Image
           tooltip: Boot disk image to use for the VM (e.g. Ubuntu, Debian, custom image).
+          section: compute
           xGoogleProperty:
             type: ET_GCE_DISK_IMAGE
         ssh_pub_key:
           name: ssh_pub_key
           title: SSH Pub Key
           tooltip: Public SSH key for accessing the VM instances.
+          section: security
         subnet_cidr:
           name: subnet_cidr
           title: Subnet Cidr
           tooltip: CIDR range for the subnet where cluster nodes will be deployed.
+          section: networking
         subnet_id:
           name: subnet_id
           title: Subnet Id
@@ -161,9 +205,8 @@ spec:
           section: networking
           xGoogleProperty:
             type: ET_GCE_SUBNETWORK
-            zoneProperty: zone
             gceSubnetwork:
-              networkVariable: networks
+              networkVariable: vpc_id
         vpc_id:
           name: vpc_id
           title: VPC Name
@@ -177,18 +220,27 @@ spec:
               machineTypeVariable: machine_type
         zones:
           name: zones
-          title: Zones
-          tooltip: List of zones where GridGain nodes will be deployed.
-          minItems: 1
-          maxItems: 8
+          title: Zone
+          tooltip: Zone where GridGain nodes will be deployed. For HA, pass multiple zones as a comma-separated string in CLI Deployment.
+          section: compute
           xGoogleProperty:
             type: ET_GCE_ZONE
       sections:
+        - name: compute
+          title: Compute Resources
+          subtext: VM instances, machine types, and storage configuration
         - name: networking
           title: Networking
+          subtext: VPC, subnets, and network access configuration
         - name: google_cloud_operations
           title: Google Cloud Operations
           subtext: Monitoring and management for services, containers, applications, and infrastructure
+        - name: security
+          title: Security & Access
+          subtext: SSH keys, OS Login, and encryption settings
+        - name: gridgain_configuration
+          title: GridGain Configuration
+          subtext: Configuration specific to GridGain cluster setup
     runtime:
       suggestedActions:
         - heading: Access the instance using gcloud

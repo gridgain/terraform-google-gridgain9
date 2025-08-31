@@ -1,10 +1,6 @@
 locals {
-  principals = length(var.oslogin_access_principals) > 0 ? var.oslogin_access_principals : [
-    "user:${data.google_client_openid_userinfo.this.email}"
-  ]
+  principals = var.oslogin_access_principals
 }
-
-data "google_client_openid_userinfo" "this" {}
 
 resource "google_service_account" "sa" {
   project      = var.project_id
@@ -17,6 +13,8 @@ resource "google_project_iam_member" "sa_logging" {
   project = var.project_id
   role    = "roles/logging.logWriter"
   member  = "serviceAccount:${google_service_account.sa.email}"
+  
+  depends_on = [google_service_account.sa]
 }
 
 resource "google_project_iam_member" "sa_metrics_writer" {
@@ -24,6 +22,8 @@ resource "google_project_iam_member" "sa_metrics_writer" {
   project = var.project_id
   role    = "roles/monitoring.metricWriter"
   member  = "serviceAccount:${google_service_account.sa.email}"
+  
+  depends_on = [google_service_account.sa]
 }
 
 resource "google_compute_project_metadata" "enable_oslogin" {
@@ -34,21 +34,21 @@ resource "google_compute_project_metadata" "enable_oslogin" {
 }
 
 resource "google_project_iam_member" "iap_tunnel" {
-  for_each = toset(local.principals)
+  for_each = length(local.principals) > 0 ? toset(local.principals) : toset([])
   project  = var.project_id
   role     = "roles/iap.tunnelResourceAccessor"
   member   = each.value
 }
 
 resource "google_project_iam_member" "os_login" {
-  for_each = toset(local.principals)
+  for_each = length(local.principals) > 0 ? toset(local.principals) : toset([])
   project  = var.project_id
   role     = "roles/compute.osLogin"
   member   = each.value
 }
 
 resource "google_project_iam_member" "os_admin_login" {
-  for_each = toset(local.principals)
+  for_each = length(local.principals) > 0 ? toset(local.principals) : toset([])
   project  = var.project_id
   role     = "roles/compute.osAdminLogin"
   member   = each.value
@@ -61,4 +61,6 @@ resource "google_kms_crypto_key_iam_binding" "sa_encrypter" {
   members       = [
     "serviceAccount:${google_service_account.sa.email}"
   ]
+  
+  depends_on = [google_service_account.sa]
 }

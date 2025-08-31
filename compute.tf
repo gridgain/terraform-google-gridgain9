@@ -28,7 +28,7 @@ resource "google_compute_instance" "this" {
   project = var.project_id
   name    = "${var.name_prefix}-${count.index}"
   machine_type = var.machine_type
-  zone    = var.zones[count.index % local.zone_count]
+  zone    = local.zones_list[count.index % local.zone_count]
 
   service_account {
     email  = google_service_account.sa.email
