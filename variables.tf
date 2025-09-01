@@ -15,9 +15,9 @@ variable "region" {
 }
 
 variable "zones" {
-  description = "List of zones to use (first element used for single‑node)"
-  type        = list(string)
-  default     = ["us-east1-b", "us-east1-c"]
+  description = "Comma-separated zones (first used for single-node)"
+  type        = string
+  default     = "us-east1-b"
 }
 
 variable "nodes_count" {
@@ -41,7 +41,7 @@ variable "machine_type" {
 variable "source_image" {
   description = "The image name for the disk for the VM instance."
   type        = string
-  default     = "projects/gridgain-public/global/images/vmi-gridgain-db-9-1-5-byol-0-0-1-9"
+  default     = "projects/gridgain-public/global/images/vmi-gridgain-db-9-1-6-byol-0-0-1-10"
 }
 
 variable "enable_project_oslogin" {

@@ -32,11 +32,9 @@ spec:
         varType: string
         defaultValue: us-east1
       - name: zones
-        description: List of zones to use (first element used for single‑node)
-        varType: list(string)
-        defaultValue:
-          - us-east1-b
-          - us-east1-c
+        description: Comma-separated zones (first used for single-node)
+        varType: string
+        defaultValue: us-east1-b
       - name: nodes_count
         description: Number of GG9 nodes. 1 = single node
         varType: number
@@ -52,7 +50,7 @@ spec:
       - name: source_image
         description: The image name for the disk for the VM instance.
         varType: string
-        defaultValue: projects/gridgain-public/global/images/vmi-gridgain-db-9-1-5-byol-0-0-1-9
+        defaultValue: projects/gridgain-public/global/images/vmi-gridgain-db-9-1-6-byol-0-0-1-10
       - name: enable_project_oslogin
         description: Allow OS Login at project level
         varType: bool
